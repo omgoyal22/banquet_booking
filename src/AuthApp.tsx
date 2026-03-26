@@ -5,6 +5,15 @@ import { Signup } from './pages/Signup';
 
 type AuthPage = 'login' | 'signup';
 
+function getMainAppUrl(): string {
+  const { protocol, hostname, port } = window.location;
+  if (hostname === 'localhost' && port === '5174') {
+    return 'http://localhost:5173/';
+  }
+
+  return `${protocol}//${window.location.host}/`;
+}
+
 function AuthAppContent() {
   const { user, session, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState<AuthPage>('login');
@@ -26,7 +35,7 @@ function AuthAppContent() {
   }
 
   if (user && session) {
-    const redirectUrl = new URL('http://localhost:5173/');
+    const redirectUrl = new URL(getMainAppUrl());
     redirectUrl.searchParams.set('access_token', session.access_token);
     redirectUrl.searchParams.set('refresh_token', session.refresh_token);
     window.location.replace(redirectUrl.toString());
